@@ -2,6 +2,7 @@ import os
 import webbrowser
 import tkinter as tk
 from tkinter import filedialog
+import subprocess
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -29,15 +30,21 @@ def get_drive_service():
 
 
 def pick_files():
-    root = tk.Tk()
-    root.withdraw()
-    paths = filedialog.askopenfilenames(
-        title="Select Slides ",
-        filetypes=[("PowerPoint files", "*.ppt *.pptx")],
-    )
-    return list(paths)
-
-
+    try:
+        result = subprocess.run(
+            [
+                "zenity", "--file-selection",
+                "--multiple",
+                "--separator=|",
+                "--title=Select PowerPoint files",
+                "--file-filter=PowerPoint files | *.ppt *.pptx",
+                "--file-filter=All files | *",
+            ],
+            capture_output=True, text=True, check=True,
+        )
+        return result.stdout.strip().split("|")
+    except subprocess.CalledProcessError:
+        return []  # user hit cancel
 def upload_as_slides(service, path):
     name = os.path.splitext(os.path.basename(path))[0]
     metadata = {"name": name, "mimeType": GOOGLE_SLIDES_MIME}
