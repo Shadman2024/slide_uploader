@@ -13,5 +13,7 @@ Install the libraries(after creating a python environment ,say google_libraries 
 pip install google-auth google-auth-oauthlib google-api-python-client
 
 
+**this works on linux , because the zenity file picker is native to linux ,andy windows or mac user can modify it , can use the native qty5 file picker instead **
+
 finally you are good to go 
 
